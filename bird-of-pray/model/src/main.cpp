@@ -3,13 +3,12 @@
 #include "fixed.hpp"
 #include "cycle.hpp"
 #include "offset.hpp"
+#include <Wire.h>
 
 long time = 0;
 const byte deltaTime = 10;
 
 animation** animations = new animation*[6];
-
-const byte torpedoPin = 2;
 
 animation* torpedo = new sequence(
   new animation*[3] {
@@ -44,16 +43,15 @@ animation* buildEngineLite(int offset, int pin){
   );
 }
 
-void fire(){
+void receiveEvent(int bytes){
+  int val = Wire.read();
+  Serial.println(val);
   if(animations[0] == NULL || animations[0]->isComplete(time)){
     animations[0] = new offset(time, torpedo);
-    //TODO trigger sound too....
   }
 }
 
 void setup() {
-  Serial.begin(9600);
-
   animations[0] = NULL; // torpedos
   animations[1] = buildEngineLite(0, 3);
   animations[2] = buildEngineLite(500, 5);
@@ -61,9 +59,9 @@ void setup() {
   animations[4] = buildEngineLite(125, 9);
   animations[5] = NULL; // disrupters?
 
-  pinMode(torpedoPin, INPUT);
-  attachInterrupt(digitalPinToInterrupt(torpedoPin), &fire, RISING);
-
+  Wire.begin(8);                // join i2c bus with address #8
+    Wire.onReceive(&receiveEvent); // register event
+    Serial.begin(9600);
 }
 
 void loop() {

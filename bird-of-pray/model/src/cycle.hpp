@@ -3,7 +3,7 @@
 
 
 #include "animation.hpp"
-#include <climits>
+//#include <climits>
 
 class cycle : public animation {
 private:
@@ -14,7 +14,7 @@ public:
     this->ani = ani;
   }
   /// getDuration stuffs
-  double getDuration(){ return LONG_MAX; }
+  double getDuration(){ return -1; }
 
   void animate(long ms){
     ani->animate(ms % (int)ani->getDuration());

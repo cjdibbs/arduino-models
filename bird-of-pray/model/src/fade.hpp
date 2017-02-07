@@ -31,8 +31,6 @@ public:
       else if(ms >= duration)
         value = max_value;
 
-      Serial.println(value);
-
       analogWrite(pin, value);
   }
 };
